@@ -1,5 +1,5 @@
 // Cambia esto por tu dominio real de la API una vez deployada en Render
-const API_BASE = 'https://api.kernelshield.xyz/api';
+const API_BASE = 'https://billing-kernelshield.onrender.com/api';
 
 const KS = {
   getToken() {
