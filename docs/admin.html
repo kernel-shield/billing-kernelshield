@@ -4,8 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin | Kernel Shield</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--violet);
+    background: rgba(124,108,255,0.1);
+    border: 1px solid rgba(124,108,255,0.3);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+</style>
 </head>
 <body>
   <div class="topbar">
@@ -17,6 +34,7 @@
   </div>
 
   <div class="wrap">
+    <span class="admin-badge">⚙ Acceso administrador</span>
     <h1>Panel de administración</h1>
     <p class="subtitle">Revisá y verificá los pagos reportados por los clientes.</p>
 

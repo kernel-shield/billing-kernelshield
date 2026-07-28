@@ -4,8 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crear cuenta | Kernel Shield</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .auth-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--violet-dim), var(--bg-panel));
+    border: 1px solid var(--border);
+    color: var(--violet);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--glow-violet);
+  }
+</style>
 </head>
 <body>
   <div class="topbar">
@@ -14,6 +28,7 @@
   </div>
 
   <div class="wrap-narrow">
+    <div class="auth-icon">✦</div>
     <h1>Crear cuenta</h1>
     <p class="subtitle">Registro real, guardado en la base de datos.</p>
 

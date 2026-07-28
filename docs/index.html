@@ -5,14 +5,119 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de cliente | Kernel Shield</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
-  .hero { text-align: center; padding: 60px 24px 40px; }
-  .hero h1 { font-size: 36px; margin-bottom: 12px; }
-  .hero p { max-width: 520px; margin: 0 auto 36px; font-size: 16px; color: var(--text-dim); }
-  .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
-  .step-num { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.1em; color: var(--shield); text-transform: uppercase; margin-bottom: 8px; }
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 96px 24px 64px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(53,230,200,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(53,230,200,0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    -webkit-mask-image: radial-gradient(560px 320px at 50% 20%, #000 0%, transparent 75%);
+    mask-image: radial-gradient(560px 320px at 50% 20%, #000 0%, transparent 75%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: -220px; left: 50%;
+    width: 720px; height: 420px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(53,230,200,0.16), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--shield);
+    background: rgba(53,230,200,0.08);
+    border: 1px solid rgba(53,230,200,0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+    animation: rise-in .5s ease both;
+  }
+  .hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--shield); box-shadow: 0 0 8px var(--shield); }
+  .hero { z-index: 1; }
+  .hero h1 {
+    position: relative;
+    font-size: clamp(32px, 5.5vw, 50px);
+    line-height: 1.08;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    animation: rise-in .55s ease .05s both;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(120deg, var(--shield), var(--violet));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p {
+    position: relative;
+    max-width: 540px;
+    margin: 0 auto 36px;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    animation: rise-in .55s ease .1s both;
+  }
+  #heroCta { position: relative; animation: rise-in .55s ease .15s both; }
+  .services-strip {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 34px auto 0;
+    max-width: 640px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .services-strip span {
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--bg-panel);
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: 18px;
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 20px 24px 90px;
+  }
+  .steps .card:nth-child(1) { animation-delay: .05s; }
+  .steps .card:nth-child(2) { animation-delay: .12s; }
+  .steps .card:nth-child(3) { animation-delay: .19s; }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--shield);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 640px) {
+    .hero { padding: 64px 20px 44px; }
+  }
 </style>
 </head>
 <body>
@@ -22,9 +127,13 @@
   </div>
 
   <div class="hero">
-    <h1>Gestioná tu servicio<br>con Kernel Shield</h1>
+    <span class="hero-eyebrow"><span class="dot"></span> Infraestructura para servidores de juego</span>
+    <h1>Gestioná tu servicio<br><span class="accent">con Kernel Shield</span></h1>
     <p>Elegí un plan, reportá tu pago y seguí el estado de tu servicio, todo desde un solo lugar.</p>
     <div id="heroCta"></div>
+    <div class="services-strip">
+      <span>SA-MP</span><span>MTA</span><span>FiveM</span><span>Minecraft</span><span>VPS</span><span>Web hosting</span><span>Discord bots</span>
+    </div>
   </div>
 
   <div class="steps" id="stepsGrid"></div>
