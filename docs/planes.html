@@ -430,9 +430,16 @@
        <a href="#" onclick="KS.logout();return false;" style="margin-left:16px;">Cerrar sesión</a>`;
   }
 
-  function cta(isEnterprise) {
-    const label = isEnterprise ? 'Consultar →' : 'Pagar ahora →';
-    return `<a class="btn" href="${_dest}">${label}</a>`;
+  function cta(isEnterprise, planNombre) {
+    if (isEnterprise) {
+      return `<a class="btn" href="https://discord.gg/kernelshield" target="_blank" rel="noopener">Consultar en Discord →</a>`;
+    }
+    // Si hay sesión va directo al formulario de pago, si no a registro
+    const dest = (_ksToken && _ksUser) ? 'panel.html' : 'registro.html';
+    return `<a class="btn" href="${dest}"
+      onclick="sessionStorage.setItem('planHint','${planNombre}');return true;">
+      Comprar →
+    </a>`;
   }
 
   function buildCard(plan, extraSpecs) {
@@ -458,7 +465,7 @@
           ${specLi('cpu', 'CPU', plan.cpu)}
         </ul>
         ${mgmtBadge(db, back)}
-        ${cta(isEnterprise)}
+        ${cta(isEnterprise, plan.nombre)}
       </div>`;
   }
 

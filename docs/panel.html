@@ -6,6 +6,40 @@
 <title>Mi panel | Kernel Shield</title>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .plan-hint-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(53,230,200,0.07);
+    border: 1px solid rgba(53,230,200,0.25);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--text-dim);
+    animation: rise-in .4s ease both;
+  }
+  .plan-hint-banner strong { color: var(--shield); }
+  .plan-hint-banner .hint-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(53,230,200,0.12);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .plan-hint-banner .hint-icon svg { width: 16px; height: 16px; color: var(--shield); }
+  .plan-hint-banner .close-hint {
+    margin-left: auto;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color .15s;
+  }
+  .plan-hint-banner .close-hint:hover { color: var(--text-dim); }
+</style>
 </head>
 <body>
   <div class="topbar">
@@ -24,6 +58,10 @@
     <div id="subsBox" class="card"><p class="empty">Cargando...</p></div>
 
     <h2>Reportar un pago</h2>
+
+    <!-- Banner de plan seleccionado (se muestra si viene de planes.html) -->
+    <div id="planHintBanner" style="display:none;"></div>
+
     <form id="payForm" class="card">
       <label for="plan_id">Plan</label>
       <select id="plan_id" required></select>
@@ -51,5 +89,25 @@
 
   <script src="js/core.js"></script>
   <script src="js/panel.js"></script>
+  <script>
+    // Mostrar banner si el usuario viene de planes.html con un plan elegido
+    const planHint = sessionStorage.getItem('planHint');
+    if (planHint) {
+      sessionStorage.removeItem('planHint');
+      const banner = document.getElementById('planHintBanner');
+      banner.style.display = 'flex';
+      banner.innerHTML = `
+        <div class="plan-hint-banner">
+          <span class="hint-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7">
+              <rect x="3" y="4" width="14" height="12" rx="2"/>
+              <path d="M7 10l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>Elegiste el plan <strong>${planHint}</strong>. Seleccionalo en el selector de abajo, completá el monto y subí tu comprobante.</span>
+          <span class="close-hint" onclick="this.closest('.plan-hint-banner').style.display='none'">✕</span>
+        </div>`;
+    }
+  </script>
 </body>
 </html>
