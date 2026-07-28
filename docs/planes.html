@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planes | Kernel Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── Hero ── */
+.planes-hero {
+  position: relative;
+  text-align: center;
+  padding: 72px 24px 52px;
+  overflow: hidden;
+}
+.planes-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(53,230,200,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53,230,200,0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  -webkit-mask-image: radial-gradient(520px 260px at 50% 20%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(520px 260px at 50% 20%, #000 0%, transparent 75%);
+  pointer-events: none;
+}
+.planes-hero::after {
+  content: "";
+  position: absolute;
+  top: -200px; left: 50%;
+  width: 640px; height: 380px;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(53,230,200,0.14), transparent 70%);
+  pointer-events: none;
+}
+.planes-hero h1 {
+  position: relative;
+  font-size: clamp(28px, 4.5vw, 44px);
+  line-height: 1.1;
+  margin-bottom: 14px;
+  animation: rise-in .5s ease both;
+}
+.planes-hero h1 .accent {
+  background: linear-gradient(120deg, var(--shield), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.planes-hero p {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 16px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  animation: rise-in .5s ease .07s both;
+}
+
+/* ── Tabs / Categorías ── */
+.tabs-wrapper {
+  position: sticky;
+  top: 58px; /* below topbar */
+  z-index: 30;
+  padding: 16px 24px;
+  background: rgba(6,9,16,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tabs-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  max-width: 1080px;
+  margin: 0 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tabs-scroll::-webkit-scrollbar { display: none; }
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .18s ease;
+  flex-shrink: 0;
+}
+.tab-btn:hover {
+  border-color: var(--shield-2);
+  color: var(--text);
+  background: var(--bg-panel-hover);
+  box-shadow: none;
+  filter: none;
+  transform: none;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--shield), var(--shield-2));
+  border-color: transparent;
+  color: #04211d;
+  font-weight: 700;
+  box-shadow: var(--glow-shield);
+}
+.tab-btn .tab-icon { display: flex; align-items: center; }
+.tab-btn .tab-icon svg { width: 15px; height: 15px; }
+
+/* ── Sección de categoría ── */
+.category-section {
+  display: none;
+  animation: rise-in .35s ease both;
+}
+.category-section.active { display: block; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.section-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-icon svg { width: 22px; height: 22px; }
+.section-icon.cyan  { background: rgba(53,230,200,0.12); border: 1px solid rgba(53,230,200,0.25); }
+.section-icon.violet{ background: rgba(124,108,255,0.12); border: 1px solid rgba(124,108,255,0.25); }
+.section-icon.amber { background: rgba(245,166,35,0.12);  border: 1px solid rgba(245,166,35,0.25); }
+.section-icon.green { background: rgba(51,209,122,0.12);  border: 1px solid rgba(51,209,122,0.25); }
+.section-icon.red   { background: rgba(255,84,112,0.12);  border: 1px solid rgba(255,84,112,0.25); }
+
+.section-header h2 { margin: 0; }
+.section-header h2::before { display: none; }
+.section-desc { color: var(--text-dim); font-size: 14px; margin: 0 0 24px; }
+
+/* ── Plan cards grid ── */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+/* Override base plan-card para añadir tiers */
+.plan-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel-2), var(--bg-panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px 20px;
+  overflow: hidden;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.plan-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(220px 120px at 100% 0%, rgba(53,230,200,0.09), transparent 70%);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.plan-card:hover {
+  border-color: var(--shield-2);
+  transform: translateY(-3px);
+  box-shadow: var(--glow-shield);
+}
+.plan-card:hover::before { opacity: 1; }
+
+/* Tier badge en el plan */
+.plan-tier {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.plan-tier.micro    { color: var(--text-faint); }
+.plan-tier.starter  { color: var(--shield-2); }
+.plan-tier.advanced { color: var(--shield); }
+.plan-tier.premium  { color: var(--violet); }
+.plan-tier.enterprise { color: var(--alert); }
+
+/* Plan name */
+.plan-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+
+/* Precio */
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 10px 0 14px;
+}
+.plan-price .amount {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+}
+.plan-price .period {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* Specs list */
+.plan-specs {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.plan-specs li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.plan-specs li .spec-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--shield);
+  opacity: .75;
+}
+.plan-specs li strong { color: var(--text); font-weight: 600; }
+
+/* Mgmt chips */
+.mgmt-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.mgmt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  background: var(--bg-input);
+}
+.mgmt-dot {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+}
+.db-dot { background: var(--shield-2); }
+.bk-dot { background: var(--violet); }
+
+/* Popular badge */
+.plan-card.popular {
+  border-color: var(--shield);
+  box-shadow: 0 0 0 1px rgba(53,230,200,0.2), var(--glow-shield);
+}
+.popular-tag {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(53,230,200,0.15);
+  border: 1px solid rgba(53,230,200,0.4);
+  color: var(--shield);
+}
+
+/* Enterprise card accent */
+.plan-card.enterprise-card {
+  background: linear-gradient(160deg, rgba(124,108,255,0.07), var(--bg-panel) 55%);
+  border-color: rgba(124,108,255,0.3);
+}
+.plan-card.enterprise-card:hover {
+  border-color: var(--violet);
+  box-shadow: var(--glow-violet);
+}
+
+/* CTA */
+.plan-card .btn { font-size: 13.5px; width: 100%; justify-content: center; }
+.plan-card.popular .btn {
+  background: linear-gradient(135deg, var(--shield), var(--shield-2));
+  box-shadow: var(--glow-shield);
+}
+.plan-card.enterprise-card .btn {
+  background: linear-gradient(135deg, var(--violet), #6055d8);
+  color: #fff;
+}
+
+/* VPS coming soon */
+.coming-soon-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(160deg, rgba(124,108,255,0.07), var(--bg-panel));
+  border: 1px dashed rgba(124,108,255,0.35);
+  border-radius: var(--radius);
+  padding: 40px 32px;
+  text-align: center;
+  color: var(--text-dim);
+}
+.coming-soon-card .cs-icon { display: flex; justify-content: center; margin-bottom: 14px; }
+.coming-soon-card .cs-icon svg { width: 36px; height: 36px; color: var(--violet); }
+.coming-soon-card h3 { font-family: var(--font-display); font-size: 20px; color: var(--text); margin: 0 0 8px; }
+.coming-soon-card p { font-size: 14px; max-width: 360px; margin: 0 auto; line-height: 1.6; }
+
+/* Wrap override */
+.planes-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 90px;
+}
+.category-block {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.category-block:last-child { border-bottom: none; }
+
+@media (max-width: 640px) {
+  .plans-grid { grid-template-columns: 1fr; }
+  .tabs-wrapper { top: 52px; padding: 12px 16px; }
+  .planes-hero { padding: 56px 20px 40px; }
+  .plan-price .amount { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> Kernel Shield · Panel</a>
+    <nav id="topNav">
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html" style="margin-left:16px;">Crear cuenta</a>
+    </nav>
+  </div>
+
+  <!-- Hero -->
+  <div class="planes-hero">
+    <h1>Hosting de servidores<br><span class="accent">a precios accesibles</span></h1>
+    <p>Planes claros, recursos reales, infraestructura dedicada. Elegí tu juego y empezá hoy.</p>
+  </div>
+
+  <!-- Sticky tabs -->
+  <div class="tabs-wrapper">
+    <div class="tabs-scroll" id="tabsBar">
+      <!-- generado por JS -->
+    </div>
+  </div>
+
+  <!-- Contenido de planes -->
+  <div class="planes-wrap" id="planesContent">
+    <!-- generado por JS -->
+  </div>
+
+  <script src="js/core.js"></script>
+  <script>
+  // ── Iconos SVG inline (spec list) ───────────────────────────────────────
+  const icons = {
+    slots: `<svg class="spec-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v3.5l2.5 1.5" stroke-linecap="round"/></svg>`,
+    ram:   `<svg class="spec-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="6.5" width="16" height="7" rx="1.5"/><path d="M6 6.5V5m4 1.5V5m4 1.5V5M6 13.5V15m4-1.5V15m4-1.5V15" stroke-linecap="round"/></svg>`,
+    ssd:   `<svg class="spec-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="14" height="10" rx="1.5"/><circle cx="14.5" cy="10" r="1.2" fill="currentColor" stroke="none"/><path d="M4.5 8h7" stroke-linecap="round"/></svg>`,
+    cpu:   `<svg class="spec-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5.5" y="5.5" width="9" height="9" rx="1"/><path d="M8 5.5V3m4 2.5V3M8 17v-2.5m4 2.5v-2.5M5.5 8H3m2.5 4H3m14-4h-2.5m2.5 4h-2.5" stroke-linecap="round"/></svg>`,
+    sites: `<svg class="spec-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7"/><path d="M10 3c-1.5 2-1.5 12 0 14M10 3c1.5 2 1.5 12 0 14M3 10h14" stroke-linecap="round"/></svg>`,
+  };
+
+  // ── SVG icons para tabs y section headers ────────────────────────────────
+  const tabIcons = {
+    samp:    `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 5h14v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/><path d="M7 15v2m6-2v2M5 15h10" stroke-linecap="round"/><circle cx="8" cy="9" r="1.2" fill="currentColor" stroke="none"/><path d="M11 8.5h3M11 11h3" stroke-linecap="round"/></svg>`,
+    openmp:  `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M7 10l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    minecraft:`<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="11" y="3" width="6" height="6" rx="1"/><rect x="3" y="11" width="6" height="6" rx="1"/><rect x="11" y="11" width="6" height="6" rx="1"/></svg>`,
+    mta:     `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 13l5-5 3 3 4-6 4 4"/><circle cx="17" cy="9" r="1.5" fill="currentColor" stroke="none"/></svg>`,
+    fivem:   `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 14l3-3a2 2 0 012.8 0l1.4 1.4a2 2 0 002.8 0L17 8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="14" r="2" stroke-width="1.5"/></svg>`,
+    gmod:    `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4" stroke-linecap="round"/></svg>`,
+    cs2:     `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12V8a1 1 0 011-1h8l3 3v2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="12" width="14" height="3" rx="1"/><path d="M7 11V8" stroke-linecap="round"/></svg>`,
+    discord: `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 8.5h.01M13 8.5h.01" stroke-linecap="round" stroke-width="2.2"/><path d="M3.5 5.5A13.5 13.5 0 017 4.5c.2.7.3 1.4.5 2 1 .5 3 .5 5 0 .2-.6.3-1.3.5-2a13.5 13.5 0 013.5 1c.9 3.5.5 6.5-.8 8.5-1 .5-2 .9-3.2 1-.2-.4-.5-.9-.5-1.5-1 .3-2 .3-2 0-.1.6-.3 1.1-.5 1.5-1.2-.1-2.2-.5-3.2-1-1.3-2-1.7-5-.8-8.5z"/></svg>`,
+    web:     `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7"/><path d="M10 3c-1.5 2-1.5 12 0 14M10 3c1.5 2 1.5 12 0 14M3 10h14" stroke-linecap="round"/></svg>`,
+    among:   `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 4a3 3 0 016 0v2c0 1.5.5 3 1 4.5L15 14H5l1-3.5C6.5 9 7 7.5 7 6V4z"/><path d="M6 14v2a1 1 0 001 1h6a1 1 0 001-1v-2" stroke-linecap="round"/><circle cx="8.5" cy="9" r="1" fill="currentColor" stroke="none"/></svg>`,
+    vps:     `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="16" height="5" rx="1.5"/><rect x="2" y="10" width="16" height="5" rx="1.5"/><circle cx="16" cy="5.5" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg>`,
+  };
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  const tierClass = t => ['micro','starter','advanced','premium','enterprise'].includes(t.toLowerCase()) ? t.toLowerCase() : 'micro';
+  const popularTiers = ['Advanced', 'Premium'];
+
+  function specLi(iconKey, label, value) {
+    return `<li>${icons[iconKey]}<span><strong>${value}</strong> ${label}</span></li>`;
+  }
+
+  function mgmtBadge(db, back) {
+    const bLabel = back === '0' ? 'Sin backup' : `${back} backup${back !== '1' ? 's' : ''}`;
+    return `<div class="mgmt-row">
+      <span class="mgmt-chip"><span class="mgmt-dot db-dot"></span>${db} DB</span>
+      <span class="mgmt-chip"><span class="mgmt-dot bk-dot"></span>${bLabel}</span>
+    </div>`;
+  }
+
+  // Detectar sesión una sola vez
+  const _ksUser  = KS.getUser();
+  const _ksToken = KS.getToken();
+  const _panelUrl = (_ksToken && _ksUser && _ksUser.rol === 'admin') ? 'admin.html' : 'panel.html';
+  const _dest = (_ksToken && _ksUser) ? _panelUrl : 'registro.html';
+
+  // Topbar dinámico
+  if (_ksToken && _ksUser) {
+    document.getElementById('topNav').innerHTML =
+      `<span style="color:var(--text-dim);font-size:14px;">Hola, <strong style="color:var(--text)">${_ksUser.first}</strong></span>
+       <a href="${_panelUrl}" style="margin-left:16px;">Mi panel</a>
+       <a href="#" onclick="KS.logout();return false;" style="margin-left:16px;">Cerrar sesión</a>`;
+  }
+
+  function cta(isEnterprise) {
+    const label = isEnterprise ? 'Consultar →' : 'Pagar ahora →';
+    return `<a class="btn" href="${_dest}">${label}</a>`;
+  }
+
+  function buildCard(plan, extraSpecs) {
+    const tier = plan.nombre;
+    const tc = tierClass(tier);
+    const isEnterprise = tc === 'enterprise';
+    const isPopular = popularTiers.includes(tier);
+    const [db, back] = plan.gestion.split('/').map(x => x.replace(/\D/g,''));
+
+    return `
+      <div class="plan-card ${isPopular ? 'popular' : ''} ${isEnterprise ? 'enterprise-card' : ''}">
+        ${isPopular ? '<span class="popular-tag">★ Popular</span>' : ''}
+        <div class="plan-tier ${tc}">${tier}</div>
+        <h3>${tier === 'Enterprise' ? 'Enterprise' : tier}</h3>
+        <div class="plan-price">
+          <span class="amount">${plan.precio}</span>
+          <span class="period">/mes</span>
+        </div>
+        <ul class="plan-specs">
+          ${extraSpecs}
+          ${specLi('ram', 'RAM', plan.ram)}
+          ${specLi('ssd', 'SSD', plan.ssd)}
+          ${specLi('cpu', 'CPU', plan.cpu)}
+        </ul>
+        ${mgmtBadge(db, back)}
+        ${cta(isEnterprise)}
+      </div>`;
+  }
+
+  // ── Datos de planes ──────────────────────────────────────────────────────
+  const categories = [
+    {
+      id: 'samp',
+      label: 'SA-MP',
+      icon: '🎮',
+      color: 'cyan',
+      desc: 'San Andreas Multiplayer — el clásico que no muere. Slots dedicados, baja latencia.',
+      plans: [
+        { nombre:'Micro',      precio:'$1',  slots:'50',  ram:'1 GB',  ssd:'1 GB',  cpu:'50%',  gestion:'1-DB/0-BACKUP' },
+        { nombre:'Starter',    precio:'$2',  slots:'150', ram:'2 GB',  ssd:'2 GB',  cpu:'100%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$3',  slots:'250', ram:'3 GB',  ssd:'3 GB',  cpu:'150%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$4',  slots:'350', ram:'4 GB',  ssd:'5 GB',  cpu:'230%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$5',  slots:'Ilim',ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'openmp',
+      label: 'Open.MP',
+      icon: '🔓',
+      color: 'cyan',
+      desc: 'El sucesor open source de SA-MP. Compatible con mods legacy, mejor rendimiento.',
+      plans: [
+        { nombre:'Micro',      precio:'$1',  slots:'50',  ram:'1 GB',  ssd:'1 GB',  cpu:'50%',  gestion:'1-DB/0-BACKUP' },
+        { nombre:'Starter',    precio:'$2',  slots:'100', ram:'2 GB',  ssd:'2 GB',  cpu:'80%',  gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$4',  slots:'200', ram:'3 GB',  ssd:'4 GB',  cpu:'130%', gestion:'4-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$6',  slots:'300', ram:'4 GB',  ssd:'5 GB',  cpu:'180%', gestion:'5-DB/4-BACKUP' },
+        { nombre:'Enterprise', precio:'$8',  slots:'Ilim',ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'6-DB/6-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'minecraft',
+      label: 'Minecraft',
+      icon: '⛏️',
+      color: 'green',
+      desc: 'Java y Bedrock. Vanilla, Paper, Spigot, Forge o Fabric — vos elegís.',
+      plans: [
+        { nombre:'Micro',      precio:'$1',  slots:'10',  ram:'1 GB',  ssd:'3 GB',  cpu:'100%', gestion:'1-DB/0-BACKUP' },
+        { nombre:'Starter',    precio:'$3',  slots:'20',  ram:'3 GB',  ssd:'7 GB',  cpu:'150%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$5',  slots:'30',  ram:'4 GB',  ssd:'11 GB', cpu:'200%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$7',  slots:'45',  ram:'6 GB',  ssd:'16 GB', cpu:'250%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$11', slots:'Ilim',ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'jugadores', p.slots),
+    },
+    {
+      id: 'mta',
+      label: 'MTA',
+      icon: '🏙️',
+      color: 'amber',
+      desc: 'Multi Theft Auto — el favorito de los servidores roleplay latinoamericanos.',
+      plans: [
+        { nombre:'Micro',      precio:'$1',  slots:'20',  ram:'1 GB',  ssd:'2 GB',  cpu:'50%',  gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$3',  slots:'64',  ram:'2 GB',  ssd:'4 GB',  cpu:'100%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$6',  slots:'128', ram:'3 GB',  ssd:'6 GB',  cpu:'150%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$8',  slots:'256', ram:'5 GB',  ssd:'10 GB', cpu:'220%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$11', slots:'Ilim',ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'fivem',
+      label: 'FiveM',
+      icon: '🚗',
+      color: 'violet',
+      desc: 'GTA V multijugador. Soporta txAdmin, scripts Lua y recursos personalizados.',
+      plans: [
+        { nombre:'Micro',      precio:'$4',  slots:'16',  ram:'3 GB',  ssd:'6 GB',  cpu:'100%', gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$9',  slots:'32',  ram:'5 GB',  ssd:'10 GB', cpu:'150%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$13', slots:'64',  ram:'8 GB',  ssd:'15 GB', cpu:'200%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$20', slots:'96',  ram:'12 GB', ssd:'20 GB', cpu:'250%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$26', slots:'128', ram:'16 GB', ssd:'30 GB', cpu:'300%', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'gmod',
+      label: "Garry's Mod",
+      icon: '🔧',
+      color: 'amber',
+      desc: "Sandbox con soporte completo para addons Steam Workshop y gamemodes custom.",
+      plans: [
+        { nombre:'Micro',      precio:'$4',  slots:'16',  ram:'2 GB',  ssd:'5 GB',  cpu:'100%', gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$7',  slots:'32',  ram:'4 GB',  ssd:'8 GB',  cpu:'150%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$10', slots:'64',  ram:'6 GB',  ssd:'12 GB', cpu:'200%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$15', slots:'96',  ram:'8 GB',  ssd:'18 GB', cpu:'250%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$22', slots:'Ilim',ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'cs2',
+      label: 'Counter-Strike 2',
+      icon: '🔫',
+      color: 'red',
+      desc: 'CS2 dedicado con plugins SourceMod, mapas custom y baja latencia garantizada.',
+      plans: [
+        { nombre:'Micro',      precio:'$4',  slots:'12',  ram:'2 GB',  ssd:'5 GB',  cpu:'100%', gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$7',  slots:'20',  ram:'4 GB',  ssd:'8 GB',  cpu:'150%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$10', slots:'32',  ram:'6 GB',  ssd:'10 GB', cpu:'200%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$15', slots:'48',  ram:'8 GB',  ssd:'15 GB', cpu:'250%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$22', slots:'64',  ram:'12 GB', ssd:'20 GB', cpu:'300%', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'slots', p.slots),
+    },
+    {
+      id: 'discord',
+      label: 'Discord Bots',
+      icon: '🤖',
+      color: 'violet',
+      desc: 'Hosting 24/7 para tus bots en Node.js, Python o cualquier runtime compatible.',
+      plans: [
+        { nombre:'Micro',      precio:'$1', slots:null, ram:'1 GB',  ssd:'1 GB',  cpu:'50%',  gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$2', slots:null, ram:'2 GB',  ssd:'3 GB',  cpu:'100%', gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$3', slots:null, ram:'4 GB',  ssd:'6 GB',  cpu:'150%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$4', slots:null, ram:'6 GB',  ssd:'8 GB',  cpu:'200%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$5', slots:null, ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: () => '', // sin slots
+    },
+    {
+      id: 'web',
+      label: 'Web Hosting',
+      icon: '🌐',
+      color: 'cyan',
+      desc: 'Hosting web con soporte para PHP, Node.js, panel de control y SSL gratuito.',
+      plans: [
+        { nombre:'Micro',      precio:'$1',  slots:'1 sitio',   ram:'1 GB',  ssd:'2 GB',  cpu:'25%',  gestion:'1-DB/0-BACKUP' },
+        { nombre:'Starter',    precio:'$2',  slots:'3 sitios',  ram:'2 GB',  ssd:'4 GB',  cpu:'50%',  gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$4',  slots:'10 sitios', ram:'4 GB',  ssd:'8 GB',  cpu:'100%', gestion:'5-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$7',  slots:'25 sitios', ram:'8 GB',  ssd:'12 GB', cpu:'150%', gestion:'10-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$12', slots:'Ilim',      ram:'Ilim',  ssd:'Ilim',  cpu:'Ilim', gestion:'25-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('sites', 'sitios', p.slots.replace(' sitios','').replace(' sitio','')),
+    },
+    {
+      id: 'among',
+      label: 'Among Us',
+      icon: '🚀',
+      color: 'red',
+      desc: 'Servidores privados de Among Us con configuración custom y acceso completo.',
+      plans: [
+        { nombre:'Micro',      precio:'$1', slots:'10',  ram:'512 MB', ssd:'1 GB',  cpu:'25%',  gestion:'1-DB/1-BACKUP' },
+        { nombre:'Starter',    precio:'$3', slots:'15',  ram:'1 GB',   ssd:'2 GB',  cpu:'50%',  gestion:'2-DB/1-BACKUP' },
+        { nombre:'Advanced',   precio:'$4', slots:'30',  ram:'2 GB',   ssd:'3 GB',  cpu:'100%', gestion:'3-DB/2-BACKUP' },
+        { nombre:'Premium',    precio:'$5', slots:'50',  ram:'3 GB',   ssd:'5 GB',  cpu:'150%', gestion:'4-DB/3-BACKUP' },
+        { nombre:'Enterprise', precio:'$9', slots:'Ilim',ram:'Ilim',   ssd:'Ilim',  cpu:'Ilim', gestion:'5-DB/5-BACKUP' },
+      ],
+      extraSpec: p => specLi('slots', 'jugadores', p.slots),
+    },
+    {
+      id: 'vps',
+      label: 'VPS',
+      icon: '🖥️',
+      color: 'violet',
+      desc: 'Próximamente',
+      plans: [],
+    },
+  ];
+
+  // ── Render tabs ──────────────────────────────────────────────────────────
+  const tabsBar = document.getElementById('tabsBar');
+  tabsBar.innerHTML = categories.map((cat, i) =>
+    `<button class="tab-btn ${i === 0 ? 'active' : ''}" data-id="${cat.id}" onclick="switchTab('${cat.id}')">
+      <span class="tab-icon">${tabIcons[cat.id] || ''}</span> ${cat.label}
+    </button>`
+  ).join('');
+
+  // ── Render content ───────────────────────────────────────────────────────
+  const content = document.getElementById('planesContent');
+  content.innerHTML = categories.map((cat, i) => {
+    const isVPS = cat.id === 'vps';
+
+    const cardsHTML = isVPS
+      ? `<div class="plans-grid">
+          <div class="coming-soon-card">
+            <div class="cs-icon">${tabIcons.vps}</div>
+            <h3>VPS — Próximamente</h3>
+            <p>Los planes de VPS están en configuración. Contactanos por Discord para precios y disponibilidad.</p>
+          </div>
+        </div>`
+      : `<div class="plans-grid">
+          ${cat.plans.map(p => buildCard(p, cat.extraSpec(p))).join('')}
+        </div>`;
+
+    return `
+      <div class="category-block category-section ${i === 0 ? 'active' : ''}" id="section-${cat.id}">
+        <div class="section-header">
+          <div class="section-icon ${cat.color}">${tabIcons[cat.id] || ''}</div>
+          <div>
+            <h2>${cat.label}</h2>
+            <p class="section-desc" style="margin:0;">${cat.desc}</p>
+          </div>
+        </div>
+        <div style="height:24px;"></div>
+        ${cardsHTML}
+      </div>`;
+  }).join('');
+
+  // ── Tab switch ───────────────────────────────────────────────────────────
+  function switchTab(id) {
+    // tabs
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    // sections
+    document.querySelectorAll('.category-section').forEach(s => s.classList.toggle('active', s.id === `section-${id}`));
+    // scroll top of content area smoothly
+    const top = document.getElementById('planesContent').getBoundingClientRect().top + window.scrollY - 120;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+  </script>
+</body>
+</html>
