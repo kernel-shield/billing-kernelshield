@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Kernel Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> Kernel Shield · Admin</a>
+    <nav>
+      <a href="#" id="logoutLink">Cerrar sesión</a>
+    </nav>
+  </div>
+
+  <div class="wrap">
+    <h1>Panel de administración</h1>
+    <p class="subtitle">Revisá y verificá los pagos reportados por los clientes.</p>
+
+    <h2>Pagos pendientes</h2>
+    <div id="pendientesBox" class="card"><p class="empty">Cargando...</p></div>
+
+    <h2>Usuarios registrados</h2>
+    <div id="usersBox" class="card"><p class="empty">Cargando...</p></div>
+  </div>
+
+  <script src="js/core.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
