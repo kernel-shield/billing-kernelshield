@@ -7,52 +7,105 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .hero { text-align: center; padding: 60px 24px 40px; }
+  .hero h1 { font-size: 36px; margin-bottom: 12px; }
+  .hero p { max-width: 520px; margin: 0 auto 36px; font-size: 16px; color: var(--text-dim); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+  .step-num { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.1em; color: var(--shield); text-transform: uppercase; margin-bottom: 8px; }
+</style>
 </head>
 <body>
   <div class="topbar">
     <a class="brand" href="index.html"><span class="dot"></span> Kernel Shield · Panel</a>
-    <nav id="topNav">
-      <a href="login.html">Iniciar sesión</a>
-      <a href="registro.html">Crear cuenta</a>
-    </nav>
+    <nav id="topNav"></nav>
   </div>
 
-  <div class="wrap">
-    <h1>Gestioná tu servicio con Kernel Shield</h1>
-    <p class="subtitle">Registrate, elegí un plan, reportá tu pago y seguí el estado de tu servicio, todo desde un solo lugar.</p>
-
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(260px,1fr));">
-      <div class="card">
-        <h2>1. Creá tu cuenta</h2>
-        <p class="subtitle" style="margin-bottom:14px;">Registro real con tu email y contraseña.</p>
-        <a class="btn" href="registro.html" id="btnRegistro">Registrarme</a>
-      </div>
-      <div class="card">
-        <h2>2. Elegí un plan</h2>
-        <p class="subtitle" style="margin-bottom:14px;">SA-MP, MTA, FiveM, VPS y más.</p>
-        <a class="btn secondary" href="planes.html">Ver planes</a>
-      </div>
-      <div class="card">
-        <h2>3. Reportá tu pago</h2>
-        <p class="subtitle" style="margin-bottom:14px;">Subí tu comprobante y esperá la verificación.</p>
-        <a class="btn secondary" href="panel.html" id="btnPanel">Ir a mi panel</a>
-      </div>
-    </div>
+  <div class="hero">
+    <h1>Gestioná tu servicio<br>con Kernel Shield</h1>
+    <p>Elegí un plan, reportá tu pago y seguí el estado de tu servicio, todo desde un solo lugar.</p>
+    <div id="heroCta"></div>
   </div>
+
+  <div class="steps" id="stepsGrid"></div>
 
   <script src="js/core.js"></script>
   <script>
     const user = KS.getUser();
     const token = KS.getToken();
+    const panelUrl = user && user.rol === 'admin' ? 'admin.html' : 'panel.html';
+
+    // Topbar
     if (token && user) {
-      const panelUrl = user.rol === 'admin' ? 'admin.html' : 'panel.html';
       document.getElementById('topNav').innerHTML =
         `<span style="color:var(--text-dim);font-size:14px;">Hola, <strong style="color:var(--text)">${user.first}</strong></span>
          <a href="${panelUrl}" style="margin-left:16px;">Mi panel</a>
          <a href="#" onclick="KS.logout();return false;" style="margin-left:16px;">Cerrar sesión</a>`;
-      document.getElementById('btnRegistro').href = panelUrl;
-      document.getElementById('btnPanel').href = panelUrl;
+    } else {
+      document.getElementById('topNav').innerHTML =
+        `<a href="login.html">Iniciar sesión</a>
+         <a href="registro.html" style="margin-left:16px;">Crear cuenta</a>`;
     }
+
+    // Hero CTA
+    if (token && user) {
+      document.getElementById('heroCta').innerHTML =
+        `<a class="btn" href="${panelUrl}" style="font-size:16px; padding:14px 28px;">Ir a mi panel →</a>`;
+    } else {
+      document.getElementById('heroCta').innerHTML =
+        `<a class="btn" href="registro.html" style="font-size:16px; padding:14px 28px; margin-right:12px;">Crear cuenta</a>
+         <a class="btn secondary" href="login.html" style="font-size:16px; padding:14px 28px;">Iniciar sesión</a>`;
+    }
+
+    // Cards de pasos
+    const steps = token && user ? [
+      {
+        n: 'Paso 1 ✓',
+        title: 'Cuenta activa',
+        desc: `Sesión iniciada como <strong>${user.first} ${user.last}</strong>.`,
+        btn: null
+      },
+      {
+        n: 'Paso 2',
+        title: 'Elegí un plan',
+        desc: 'SA-MP, MTA, FiveM, VPS y más. Revisá los precios y elegí el que mejor se adapte.',
+        btn: { label: 'Ver planes', href: 'planes.html', style: 'secondary' }
+      },
+      {
+        n: 'Paso 3',
+        title: 'Reportá tu pago',
+        desc: 'Subí tu comprobante desde tu panel y esperá la verificación.',
+        btn: { label: 'Ir a mi panel', href: panelUrl, style: '' }
+      }
+    ] : [
+      {
+        n: 'Paso 1',
+        title: 'Creá tu cuenta',
+        desc: 'Registro real con tu email y contraseña. Solo toma un minuto.',
+        btn: { label: 'Registrarme', href: 'registro.html', style: '' }
+      },
+      {
+        n: 'Paso 2',
+        title: 'Elegí un plan',
+        desc: 'SA-MP, MTA, FiveM, VPS y más. Revisá los precios y elegí el que mejor se adapte.',
+        btn: { label: 'Ver planes', href: 'planes.html', style: 'secondary' }
+      },
+      {
+        n: 'Paso 3',
+        title: 'Reportá tu pago',
+        desc: 'Subí tu comprobante y esperá la verificación. Te avisamos cuando esté activo.',
+        btn: null
+      }
+    ];
+
+    document.getElementById('stepsGrid').innerHTML = steps.map(s => `
+      <div class="card">
+        <div class="step-num">${s.n}</div>
+        <h2 style="margin-bottom:8px;">${s.title}</h2>
+        <p class="subtitle" style="margin-bottom:${s.btn ? '16px' : '0'};">${s.desc}</p>
+        ${s.btn ? `<a class="btn ${s.btn.style}" href="${s.btn.href}">${s.btn.label}</a>` : ''}
+      </div>
+    `).join('');
   </script>
 </body>
 </html>
