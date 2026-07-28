@@ -19,10 +19,10 @@
 
     <form id="loginForm" class="card">
       <label for="email">Email</label>
-      <input type="email" id="email" required>
+      <input type="email" id="email" autocomplete="email" required>
 
       <label for="password">Contraseña</label>
-      <input type="password" id="password" required>
+      <input type="password" id="password" autocomplete="current-password" required>
 
       <button type="submit" style="width:100%; margin-top:20px;">Entrar</button>
       <div id="msg"></div>
@@ -32,6 +32,12 @@
 
   <script src="js/core.js"></script>
   <script>
+    // Si ya hay sesión activa, redirigir directo
+    const _u = KS.getUser();
+    if (KS.getToken() && _u) {
+      window.location.href = _u.rol === 'admin' ? 'admin.html' : 'panel.html';
+    }
+
     const form = document.getElementById('loginForm');
     const msg = document.getElementById('msg');
 

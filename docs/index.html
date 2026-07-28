@@ -10,8 +10,8 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="brand"><span class="dot"></span> Kernel Shield · Panel</div>
-    <nav>
+    <a class="brand" href="index.html"><span class="dot"></span> Kernel Shield · Panel</a>
+    <nav id="topNav">
       <a href="login.html">Iniciar sesión</a>
       <a href="registro.html">Crear cuenta</a>
     </nav>
@@ -25,7 +25,7 @@
       <div class="card">
         <h2>1. Creá tu cuenta</h2>
         <p class="subtitle" style="margin-bottom:14px;">Registro real con tu email y contraseña.</p>
-        <a class="btn" href="registro.html">Registrarme</a>
+        <a class="btn" href="registro.html" id="btnRegistro">Registrarme</a>
       </div>
       <div class="card">
         <h2>2. Elegí un plan</h2>
@@ -35,9 +35,24 @@
       <div class="card">
         <h2>3. Reportá tu pago</h2>
         <p class="subtitle" style="margin-bottom:14px;">Subí tu comprobante y esperá la verificación.</p>
-        <a class="btn secondary" href="login.html">Ir a mi panel</a>
+        <a class="btn secondary" href="panel.html" id="btnPanel">Ir a mi panel</a>
       </div>
     </div>
   </div>
+
+  <script src="js/core.js"></script>
+  <script>
+    const user = KS.getUser();
+    const token = KS.getToken();
+    if (token && user) {
+      const panelUrl = user.rol === 'admin' ? 'admin.html' : 'panel.html';
+      document.getElementById('topNav').innerHTML =
+        `<span style="color:var(--text-dim);font-size:14px;">Hola, <strong style="color:var(--text)">${user.first}</strong></span>
+         <a href="${panelUrl}" style="margin-left:16px;">Mi panel</a>
+         <a href="#" onclick="KS.logout();return false;" style="margin-left:16px;">Cerrar sesión</a>`;
+      document.getElementById('btnRegistro').href = panelUrl;
+      document.getElementById('btnPanel').href = panelUrl;
+    }
+  </script>
 </body>
 </html>
