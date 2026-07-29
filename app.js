@@ -1,6 +1,6 @@
 // 1. Configurar Supabase (Saca estos datos de Configuración > API en tu panel de Supabase)
-const SUPABASE_URL = 'https://tu-proyecto.supabase.co';
-const SUPABASE_KEY = 'tu-anon-key-publica';
+const SUPABASE_URL = 'https://ttbuyksgtfehoxlcyvob.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_KQ_ky4rroD6hIeUIjFa5vA__OakVL21';
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 2. Generar el QR de Nequi
